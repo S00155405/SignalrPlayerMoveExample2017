@@ -45,9 +45,13 @@ namespace MonoGameClient
             // create input engine
             new InputEngine(this);
             new FadeTextManager(this);
-
+            
             // TODO: Add your initialization logic here change local host to newly created local host
-            serverConnection = new HubConnection("http://localhost:53922/");
+            // http://signalrgameserver20171123102038.azurewebsites.net/
+            // Second server http://ppowellgameserver.azurewebsites.net
+            //serverConnection = new HubConnection("http://localhost:53922/");
+            //serverConnection = new HubConnection("http://signalrgameserver20171123102038.azurewebsites.net");
+            serverConnection = new HubConnection("http://ppowellgameserver.azurewebsites.net");
             serverConnection.StateChanged += ServerConnection_StateChanged;
             proxy = serverConnection.CreateHubProxy("GameHub");
             serverConnection.Start();
@@ -79,7 +83,7 @@ namespace MonoGameClient
                 {
                     OtherPlayerSprite p = ((OtherPlayerSprite)player);
                     p.pData.playerPosition = newPos;
-                    p.Position = new Point(p.pData.playerPosition.X, p.pData.playerPosition.Y);
+                    p.Target = new Point(p.pData.playerPosition.X, p.pData.playerPosition.Y);
                     break; // break out of loop as only one player position is being updated
                            // and we have found it
                 }
