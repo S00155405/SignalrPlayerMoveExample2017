@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MonoGameClient.Game1">
+    <Position X="7.75" Y="2.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAYAEEECAAACQwgAACgAAAAAAAAAAAgBAAAgAAAAAAQ=</HashCode>
+      <FileName>Game1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MonoGameClient.Program" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameComponentNS.FadeTextManager">
+    <Position X="11.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>GameObjects\FadeText.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameComponentNS.FadeText">
+    <Position X="13" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAgAgAAAAIAAAQAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\FadeText.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Engines.InputEngine" Collapsed="true">
+    <Position X="4.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMRgAMCAgAAIAACBAAAIAQAAqAgAARAAAigEAAATCAI=</HashCode>
+      <FileName>GameObjects\InputEngine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sprites.OtherPlayerSprite">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAgAAQAAAAAgAgAAAAACAAAAAAABAIAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\OtherPlayers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sprites.SimplePlayerSprite">
+    <Position X="1.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAgAAQAAAAAgAgAAAAAAgAAAAAARAIAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\SimplePlayerSprite.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Engine.Engines.Direction" Collapsed="true">
+    <Position X="5.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACACAAAEAAAI=</HashCode>
+      <FileName>GameObjects\InputEngine.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
