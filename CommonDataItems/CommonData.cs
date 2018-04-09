@@ -30,6 +30,7 @@ namespace CommonDataItems
         public Position position;
         public int value;
         public int id;
+        public bool alive = true;
 
         public Collectable(int id ,Position position, int value)
         {

@@ -61,7 +61,8 @@ namespace Sprites
                 proxy.Invoke("Moved", new Object[] 
                 {
                     pData.playerID,
-                    pData.playerPosition});
+                    pData.playerPosition,
+                    pData.GXp});
             }
 
             BoundingRect = new Rectangle(Position.X, Position.Y, Image.Width, Image.Height);

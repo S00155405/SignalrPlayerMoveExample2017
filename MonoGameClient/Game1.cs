@@ -59,8 +59,8 @@ namespace MonoGameClient
             // TODO: Add your initialization logic here change local host to newly created local host
             // http://signalrgameserver20171123102038.azurewebsites.net/
             // Second server http://ppowellgameserver.azurewebsites.net
-            //serverConnection = new HubConnection("http://localhost:53922/");
-            serverConnection = new HubConnection("https://rad302gameass.azurewebsites.net");
+            serverConnection = new HubConnection("http://localhost:53922/");
+            //serverConnection = new HubConnection("https://rad302gameass.azurewebsites.net");
             //serverConnection = new HubConnection("http://ppowellgameserver.azurewebsites.net");
             serverConnection.StateChanged += ServerConnection_StateChanged;
             proxy = serverConnection.CreateHubProxy("GameHub");
@@ -188,29 +188,31 @@ namespace MonoGameClient
 
                         });
 
-            proxy.Invoke<List<Collectable>>("spawnCollectable").ContinueWith(
+                proxy.Invoke<List<Collectable>>("spawnCollectable").ContinueWith(
                    (v) =>
                    {
-                       if (v.Result == null)
-                       {
-                           connectionMessage = "No collectable";
-                       }
-                       else
-                       {
-                           CreateCollectables(v.Result);
-                       }
+                       //if (v.Result == null)
+                       //{
+                       //    connectionMessage = "No collectable";
+                       //}
+                       //else
+                       //{
+                       //    //CreateCollectables(v.Result);
+                       //}
                    });
+            
+            
         }
 
         private void CreateCollectables(List<Collectable> result)
         {
             //foreach (Collectable box in result)
             //{
-            DrawCollectable(result);
+            
             foreach (Collectable Item in result)
             {
                 totalCollectable.Add(Item);
-
+                DrawCollectable(Item);
             }
             
             //}
@@ -276,48 +278,41 @@ namespace MonoGameClient
 
                 Exit();
             }
-            //if(totalCollectable.Count != 0)
-            //{
+
                 foreach (Collectable CollectedBox in totalCollectable)
                 {
+                if (CollectedBox.alive)
+                {
+
+
                     Rectangle colRect = new Rectangle(CollectedBox.position.X, CollectedBox.position.Y, collTexture.Width, collTexture.Height);
                     Rectangle plaRect = new Rectangle(Player.playerPosition.X, Player.playerPosition.Y, PlayerTex.Width, PlayerTex.Height);
 
 
-                    if (colRect.Intersects(plaRect) || plaRect.Intersects(colRect))
+                    if (colRect.Intersects(plaRect))
                     {
-                       
-                        proxy.Invoke<int>("RemoveColl", new object[] { CollectedBox.id }).ContinueWith(
-                        (r) =>
-                        {
-                            //Player.GXp = CollectedBox.value;
+                        
+                        CollectedBox.alive = false;
 
-                        //if (r.Result == null)
-                        //{
-
-                        //}
-                        //else
-                        //{
-                        RemoveCollectable(r.Result);
-                        //}
-                    });
-
+                        proxy.Invoke("RemoveColl", new object[] { CollectedBox, Player });
                     }
-                //}
+                }
+                
             }
 
             base.Update(gameTime);
         }
 
-        private void RemoveCollectable(int result)
-        {
-            Collectable CollectableToRemove = totalCollectable.Find(l => l.id == result);
-            totalCollectable.Remove(CollectableToRemove);
+        //private void RemoveCollectable(int result)
+        //{
+        //    Collectable CollectableToRemove = totalCollectable.Find(l => l.id == result);
+            
 
-           
-        }
+            
+        //    //totalCollectable.Remove(CollectableToRemove);
+        //}
 
-        private void DrawCollectable(List<Collectable> result)
+        private void DrawCollectable(Collectable result)
         {
             //GraphicsDevice.Clear(Color.CornflowerBlue);
             //SpriteBatch spriteB = Services.GetService<SpriteBatch>();
@@ -337,9 +332,13 @@ namespace MonoGameClient
             {
                 foreach (Collectable CollectableToDraw in totalCollectable)
                 {
-                    Rectangle colRect = new Rectangle(CollectableToDraw.position.X, CollectableToDraw.position.Y, collTexture.Width, collTexture.Height);
-                    spriteBatch.Draw(collTexture, new Vector2(CollectableToDraw.position.X, CollectableToDraw.position.Y),colRect, Color.White);
+                    if (CollectableToDraw.alive)
+                    {
 
+
+                        Rectangle colRect = new Rectangle(CollectableToDraw.position.X, CollectableToDraw.position.Y, collTexture.Width, collTexture.Height);
+                        spriteBatch.Draw(collTexture, new Vector2(CollectableToDraw.position.X, CollectableToDraw.position.Y), colRect, Color.White);
+                    }
                 }
 
             }

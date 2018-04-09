@@ -13,7 +13,7 @@ namespace SignalrGameServer
         
         public int CollID = 0;
         #region Game hub variables
-
+        public static int TPlayer = 0;
         Collectable collectable;
         public static List<Collectable> GameCollectables = new List<Collectable>();
 
@@ -61,7 +61,7 @@ namespace SignalrGameServer
                 {
                     PlayerData newPlayer = RegisteredPlayers.Dequeue();
                     newPlayer.imageName = character;
-                    newPlayer.playerPosition = new Position { X = new Random().Next(0,700),Y = new Random().Next(0,50) };
+                    newPlayer.playerPosition = new Position { X = new Random().Next(0,700),Y = new Random().Next(0,20) };
                     // Tell all the other clients that this player has Joined
                     Clients.Others.Joined(newPlayer);
                     // Tell this client about all the other current 
@@ -78,43 +78,70 @@ namespace SignalrGameServer
 
         public List<Collectable> spawnCollectable()
         {
-            Random ran = new Random();
-            //List<Collectable> collectables = new List<Collectable>();
-
-            for (int i = 0; i <= 10; i++)
+            
+            if (TPlayer <= 1)
             {
-                
-                collectable = new Collectable(CollID ,new Position { X = ran.Next(0, 700), Y = ran.Next(60, 500) }, ran.Next(1, 5));
-                GameCollectables.Add(collectable);
-                CollID++;
+                Random ran = new Random();
+                //List<Collectable> collectables = new List<Collectable>();
+               // GameCollectables.Clear();
 
+                for (int i = 0; i <= 9; i++)
+                {
+
+                    collectable = new Collectable(CollID, new Position { X = ran.Next(0, 700), Y = ran.Next(100, 400) }, ran.Next(10, 50));
+                    GameCollectables.Add(collectable);
+                    CollID++;
+
+                }
+
+                //Clients.Others.DrawCollectables(GameCollectables);
+                Clients.Caller.DrawCollectables(GameCollectables);
+                //GameCollectables2 = GameCollectables;
+                TPlayer++; 
             }
+            else
+            {
 
-            Clients.Others.DrawCollectables(GameCollectables);
-            //Clients.Caller.DrawCollectables(GameCollectables);
-           //GameCollectables2 = GameCollectables;
+                Clients.Caller.DrawCollectables(GameCollectables);
+            }
             return GameCollectables;
         }
 
-        public int RemoveColl(int col)
+        public int RemoveColl(Collectable col, PlayerData play)
         {
             Random ran = new Random();
             List<Collectable> GameCollectables2 = new List<Collectable>();
-            Collectable found = GameCollectables.FirstOrDefault(g => g.id == col);
+            Collectable found = GameCollectables.FirstOrDefault(g => g.id == col.id);
             if (found == null)
             {
-                found = new Collectable( 1 ,new Position { X = ran.Next(0, 700), Y = ran.Next(60, 500) }, ran.Next(1, 5));
-            }
-            GameCollectables.Remove(found);
 
-            if (GameCollectables.Count <= 0)
+            }
+            else
             {
+                PlayerData foundPlayer = Players.FirstOrDefault(p => p.playerID == play.playerID);
+
+                foundPlayer.GXp += col.value;
+
+                found.alive = false;
+                
+            }
+
+            int count = 0;
+            foreach (Collectable c in GameCollectables)
+            {
+                if (!c.alive)
+                {
+                    count++;
+                }
+            }
+            if (count == GameCollectables.Count)
+            {
+                //proxy.Invoke("RemoveColl", new object[] { CollectedBox, Player });
                 //End Game
                 DisplayLeaderBoard();
             }
-            
 
-            return found.value;
+            return found.id;
 
         }
 
@@ -122,11 +149,17 @@ namespace SignalrGameServer
         {
             foreach (PlayerData item in Players)
             {
+
                 Clients.All.AddToLeaderboard(item);
+
+            }
+            foreach(PlayerData item in Players)
+            {
+                item.XP += item.GXp;
             }
         }
 
-        public void Moved(string playerID, Position newPosition)
+        public void Moved(string playerID, Position newPosition, int score)
         {
             // Update the collection with the new player position is the player exists
             PlayerData found = Players.FirstOrDefault(p => p.playerID == playerID);
