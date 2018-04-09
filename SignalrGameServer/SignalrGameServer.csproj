@@ -135,6 +135,10 @@
     <None Include="Properties\PublishProfiles\ppowellGameServer - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ppowellGameServer - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\ppowellGameServer - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\Rad302GameAss - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Rad302GameAss - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\Rad302GameAss - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Rad302GameAss - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\SignalrGameServer20171123102038 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\SignalrGameServer20171123102038 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\SignalrGameServer20171123102038.pubxml" />

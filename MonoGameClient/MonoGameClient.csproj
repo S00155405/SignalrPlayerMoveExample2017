@@ -45,6 +45,7 @@
     <Compile Include="GameObjects\FadeText.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObjects\InputEngine.cs" />
+    <Compile Include="GameObjects\Leaderboard.cs" />
     <Compile Include="GameObjects\SimplePlayerSprite.cs" />
     <Compile Include="GameObjects\OtherPlayers.cs" />
     <Compile Include="Program.cs" />
@@ -90,10 +91,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\box.png" />
     <Content Include="Content\Player 1.png" />
     <Content Include="Content\Player 2.png" />
     <Content Include="Content\Player 3.png" />
     <Content Include="Content\Player 4.png" />
+    <Content Include="Content\Player 5.png" />
+    <Content Include="Content\Player 6.png" />
+    <Content Include="Content\Player 7.png" />
+    <Content Include="Content\Player 8.png" />
     <Content Include="Icon.ico" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />

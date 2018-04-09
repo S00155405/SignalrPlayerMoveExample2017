@@ -8,6 +8,7 @@ using Engine.Engines;
 using Sprites;
 using System.Collections.Generic;
 using GameComponentNS;
+using gameClient.GameObjects;
 
 namespace MonoGameClient
 {
@@ -20,14 +21,22 @@ namespace MonoGameClient
         SpriteBatch spriteBatch;
         SpriteFont font;
         string connectionMessage = string.Empty;
-
+        PlayerData Player;
+        Collectable collectable;
+        Texture2D collTexture;
+        Texture2D PlayerTex;
+        public bool DrawC = false;
+        public static List<PlayerData> totalPlayers = new List<PlayerData>();
+        public static List<Collectable> totalCollectable = new List<Collectable>();
         // SignalR Client object delarations
 
         HubConnection serverConnection;
         IHubProxy proxy;
 
         public bool Connected { get; private set; }
+        public float Timer = 3;
 
+        Random randomPositionGenerator = new Random();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -45,17 +54,26 @@ namespace MonoGameClient
             // create input engine
             new InputEngine(this);
             new FadeTextManager(this);
-            
+            new Leaderboard(this);
+
             // TODO: Add your initialization logic here change local host to newly created local host
             // http://signalrgameserver20171123102038.azurewebsites.net/
             // Second server http://ppowellgameserver.azurewebsites.net
             //serverConnection = new HubConnection("http://localhost:53922/");
-            //serverConnection = new HubConnection("http://signalrgameserver20171123102038.azurewebsites.net");
-            serverConnection = new HubConnection("http://ppowellgameserver.azurewebsites.net");
+            serverConnection = new HubConnection("https://rad302gameass.azurewebsites.net");
+            //serverConnection = new HubConnection("http://ppowellgameserver.azurewebsites.net");
             serverConnection.StateChanged += ServerConnection_StateChanged;
             proxy = serverConnection.CreateHubProxy("GameHub");
             serverConnection.Start();
 
+            Action<PlayerData> DL = DisplayLeaderBoard;
+            proxy.On<PlayerData>("AddToLeaderboard", DL);
+
+            //Action<Collectable> RCol = RemoveCollectable;
+            //proxy.On<Collectable>("RemoveCollectable", RCol);
+
+            Action<List<Collectable>> blah = CreateCollectables;
+            proxy.On<List<Collectable>>("DrawCollectables", blah);
 
             Action<PlayerData> joined = clientJoined;
             proxy.On<PlayerData>("Joined", joined);
@@ -66,12 +84,22 @@ namespace MonoGameClient
             Action<string, Position> otherMove = clientOtherMoved;
             proxy.On<string, Position>("OtherMove", otherMove);
 
+           
+
             // Add the proxy client as a Game service o components can send messages 
             Services.AddService<IHubProxy>(proxy);
+
+
 
             base.Initialize();
         }
 
+        private void DisplayLeaderBoard(PlayerData obj)
+        {
+            new LeaderboardText(this, new Vector2 (GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2), string.Format(" {0}  {1} + {2}",
+                         obj.GamerTag , obj.XP, obj.GXp ));
+        }
+        
         private void clientOtherMoved(string playerID, Position newPos)
         {
             // iterate over all the other player components 
@@ -89,8 +117,6 @@ namespace MonoGameClient
                 }
             }
         }
-
-
         // Only called when the client joins a game
         private void clientPlayers(List<PlayerData> otherPlayers)
         {
@@ -108,10 +134,14 @@ namespace MonoGameClient
             // Create an other player sprite
             new OtherPlayerSprite(this, otherPlayerData, Content.Load<Texture2D>(otherPlayerData.imageName),
                                     new Point(otherPlayerData.playerPosition.X, otherPlayerData.playerPosition.Y));
+            totalPlayers.Add(otherPlayerData);
             new FadeText(this,Vector2.Zero,otherPlayerData.GamerTag + " has joined the game ");
         }
 
-
+        private void clientleft(string pData)
+        {
+            PlayerData playerToRemove = totalPlayers.Find(l => l.playerID == pData);
+        }
 
         private void ServerConnection_StateChanged(StateChange State)
     {
@@ -135,6 +165,7 @@ namespace MonoGameClient
 
         }
     }
+
         private void startGame()
         {
             // Continue on and subscribe to the incoming messages joined, currentPlayers, otherMove messages
@@ -154,16 +185,42 @@ namespace MonoGameClient
                                 // We'll use a simple sprite player for the purposes of demonstration 
 
                             }
-                            
-                        });
-            
 
+                        });
+
+            proxy.Invoke<List<Collectable>>("spawnCollectable").ContinueWith(
+                   (v) =>
+                   {
+                       if (v.Result == null)
+                       {
+                           connectionMessage = "No collectable";
+                       }
+                       else
+                       {
+                           CreateCollectables(v.Result);
+                       }
+                   });
+        }
+
+        private void CreateCollectables(List<Collectable> result)
+        {
+            //foreach (Collectable box in result)
+            //{
+            DrawCollectable(result);
+            foreach (Collectable Item in result)
+            {
+                totalCollectable.Add(Item);
+
+            }
+            
+            //}
 
         }
 
         // When we get new player Data Create 
         private void CreatePlayer(PlayerData player)
         {
+            Player = player;
             // Create an other player sprites in this client afte
             new SimplePlayerSprite(this, player, Content.Load<Texture2D>(player.imageName),
                                     new Point(player.playerPosition.X, player.playerPosition.Y));
@@ -180,6 +237,8 @@ namespace MonoGameClient
             Services.AddService<SpriteBatch>(spriteBatch);
 
             font = Content.Load<SpriteFont>("Message");
+            collTexture = Content.Load<Texture2D>("box");
+            PlayerTex = Content.Load<Texture2D>("Player 1");
             Services.AddService<SpriteFont>(font);
             
         }
@@ -201,25 +260,105 @@ namespace MonoGameClient
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            {
+                proxy.Invoke<string>("RemovePlayer", new object[] { Player.playerID }).ContinueWith(
+                    (s) =>
+                    {
+                        if (s.Result == null)
+                        {
 
-            // TODO: Add your update logic here
+                        }
+                        else
+                        {
+                            clientleft(s.Result);
+                        }
+                    });
+
+                Exit();
+            }
+            //if(totalCollectable.Count != 0)
+            //{
+                foreach (Collectable CollectedBox in totalCollectable)
+                {
+                    Rectangle colRect = new Rectangle(CollectedBox.position.X, CollectedBox.position.Y, collTexture.Width, collTexture.Height);
+                    Rectangle plaRect = new Rectangle(Player.playerPosition.X, Player.playerPosition.Y, PlayerTex.Width, PlayerTex.Height);
+
+
+                    if (colRect.Intersects(plaRect) || plaRect.Intersects(colRect))
+                    {
+                       
+                        proxy.Invoke<int>("RemoveColl", new object[] { CollectedBox.id }).ContinueWith(
+                        (r) =>
+                        {
+                            //Player.GXp = CollectedBox.value;
+
+                        //if (r.Result == null)
+                        //{
+
+                        //}
+                        //else
+                        //{
+                        RemoveCollectable(r.Result);
+                        //}
+                    });
+
+                    }
+                //}
+            }
 
             base.Update(gameTime);
         }
+
+        private void RemoveCollectable(int result)
+        {
+            Collectable CollectableToRemove = totalCollectable.Find(l => l.id == result);
+            totalCollectable.Remove(CollectableToRemove);
+
+           
+        }
+
+        private void DrawCollectable(List<Collectable> result)
+        {
+            //GraphicsDevice.Clear(Color.CornflowerBlue);
+            //SpriteBatch spriteB = Services.GetService<SpriteBatch>();
+            //spriteB.Begin();
+            DrawC = true;
+
+            //spriteB.End();
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            
+            spriteBatch.Begin();
+
+            if (DrawC == true)
+            {
+                foreach (Collectable CollectableToDraw in totalCollectable)
+                {
+                    Rectangle colRect = new Rectangle(CollectableToDraw.position.X, CollectableToDraw.position.Y, collTexture.Width, collTexture.Height);
+                    spriteBatch.Draw(collTexture, new Vector2(CollectableToDraw.position.X, CollectableToDraw.position.Y),colRect, Color.White);
+
+                }
+
+            }
+            spriteBatch.DrawString(font, connectionMessage, new Vector2(10, 10), Color.White);
+            //TODO: Add your drawing code here
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+
+
 
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-            spriteBatch.DrawString(font, connectionMessage, new Vector2(10, 10), Color.White);
-            // TODO: Add your drawing code here
-            spriteBatch.End();
-            base.Draw(gameTime);
-        }
+
+
+
+
+
     }
 }
