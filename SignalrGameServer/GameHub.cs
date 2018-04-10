@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using CommonDataItems;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace SignalrGameServer
 {
@@ -16,21 +18,20 @@ namespace SignalrGameServer
         public static int TPlayer = 0;
         Collectable collectable;
         public static List<Collectable> GameCollectables = new List<Collectable>();
-
-
-
+        
 
         // Use static to protect Data across dofferent hub invocations
         public static Queue<PlayerData> RegisteredPlayers = new Queue<PlayerData>(new PlayerData[]
         {
-            new PlayerData { GamerTag = "Dark Terror", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 200 ,GXp = 0 },
-            new PlayerData { GamerTag = "Mistic Meg", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
-            new PlayerData { GamerTag = "Jinxy", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 1200 ,GXp = 0 },
-            new PlayerData { GamerTag = "Jabber Jaws", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
-            new PlayerData { GamerTag = "Darks Terror", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 200,GXp = 0  },
-            new PlayerData { GamerTag = "Mistics Meg", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
-            new PlayerData { GamerTag = "Jinxys", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 1200,GXp = 0  },
-            new PlayerData { GamerTag = "Jabbers Jaws", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
+
+            new PlayerData { GamerTag = "Dark Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200 ,GXp = 0 },
+            new PlayerData { GamerTag = "Mistic Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
+            new PlayerData { GamerTag = "Jinxy", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200 ,GXp = 0 },
+            new PlayerData { GamerTag = "Jabber Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
+            new PlayerData { GamerTag = "Darks Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200,GXp = 0  },
+            new PlayerData { GamerTag = "Mistics Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
+            new PlayerData { GamerTag = "Jinxys", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200,GXp = 0  },
+            new PlayerData { GamerTag = "Jabbers Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
         });
        
         public static List<PlayerData> Players = new List<PlayerData>();
@@ -48,7 +49,7 @@ namespace SignalrGameServer
         }
 
 
-        public PlayerData Join()
+        public PlayerData Join(PlayerData name)
         {
             //Clients.All.Remove();
             // Check and if the charcters
@@ -57,9 +58,11 @@ namespace SignalrGameServer
                 // pop name
                 string character = characters.Pop();
                 // if there is a registered player
-                if (RegisteredPlayers.Count > 0)
+                if (name != null)
                 {
-                    PlayerData newPlayer = RegisteredPlayers.Dequeue();
+
+
+                    PlayerData newPlayer = new PlayerData { GamerTag = name.PlayerName, imageName = "", ID = name.ID, XP = name.XP, GXp = 0 };
                     newPlayer.imageName = character;
                     newPlayer.playerPosition = new Position { X = new Random().Next(0,700),Y = new Random().Next(0,20) };
                     // Tell all the other clients that this player has Joined
@@ -118,7 +121,7 @@ namespace SignalrGameServer
             }
             else
             {
-                PlayerData foundPlayer = Players.FirstOrDefault(p => p.playerID == play.playerID);
+                PlayerData foundPlayer = Players.FirstOrDefault(p => p.ID == play.ID);
 
                 foundPlayer.GXp += col.value;
 
@@ -156,13 +159,19 @@ namespace SignalrGameServer
             foreach(PlayerData item in Players)
             {
                 item.XP += item.GXp;
+                using (WebClient client = new WebClient())
+                {
+                    string jsonData = client.UploadString("http://localhost:63207/api/PlayerDatas/5", item.ToString());
+                    
+                }
             }
+
         }
 
         public void Moved(string playerID, Position newPosition, int score)
         {
             // Update the collection with the new player position is the player exists
-            PlayerData found = Players.FirstOrDefault(p => p.playerID == playerID);
+            PlayerData found = Players.FirstOrDefault(p => p.ID == playerID);
 
             if (found != null)
             {
@@ -177,7 +186,7 @@ namespace SignalrGameServer
         public void RemovePlayer(string playerID)
         {
             // Update the collection with the new player position is the player exists
-            PlayerData found = Players.FirstOrDefault(p => p.playerID == playerID);
+            PlayerData found = Players.FirstOrDefault(p => p.ID == playerID);
 
             if (found != null)
             {

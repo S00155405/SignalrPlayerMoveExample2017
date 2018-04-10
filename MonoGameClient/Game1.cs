@@ -9,6 +9,8 @@ using Sprites;
 using System.Collections.Generic;
 using GameComponentNS;
 using gameClient.GameObjects;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace MonoGameClient
 {
@@ -37,8 +39,22 @@ namespace MonoGameClient
         public float Timer = 3;
 
         Random randomPositionGenerator = new Random();
+        PlayerData user;
+        public PlayerData name;
+
+        List<PlayerData> users = new List<PlayerData>();
+
+        private void GetAllUsers()
+        {
+            using (WebClient client = new WebClient())
+            {
+                string jsonData = client.DownloadString("http://localhost:63207/api/PlayerDatas");
+                users = JsonConvert.DeserializeObject<List<PlayerData>>(jsonData);
+            }
+        }
         public Game1()
         {
+            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
@@ -55,7 +71,8 @@ namespace MonoGameClient
             new InputEngine(this);
             new FadeTextManager(this);
             new Leaderboard(this);
-
+            GetAllUsers();
+            name = users[0];
             // TODO: Add your initialization logic here change local host to newly created local host
             // http://signalrgameserver20171123102038.azurewebsites.net/
             // Second server http://ppowellgameserver.azurewebsites.net
@@ -65,7 +82,7 @@ namespace MonoGameClient
             serverConnection.StateChanged += ServerConnection_StateChanged;
             proxy = serverConnection.CreateHubProxy("GameHub");
             serverConnection.Start();
-
+            
             Action<PlayerData> DL = DisplayLeaderBoard;
             proxy.On<PlayerData>("AddToLeaderboard", DL);
 
@@ -107,7 +124,7 @@ namespace MonoGameClient
             foreach (var player in Components)
             {
                 if (player.GetType() == typeof(OtherPlayerSprite)
-                    && ((OtherPlayerSprite)player).pData.playerID == playerID)
+                    && ((OtherPlayerSprite)player).pData.ID == playerID)
                 {
                     OtherPlayerSprite p = ((OtherPlayerSprite)player);
                     p.pData.playerPosition = newPos;
@@ -125,7 +142,7 @@ namespace MonoGameClient
                 // Create an other player sprites in this client afte
                 new OtherPlayerSprite(this, player, Content.Load<Texture2D>(player.imageName),
                                         new Point(player.playerPosition.X, player.playerPosition.Y));
-                connectionMessage = player.playerID + " delivered ";
+                connectionMessage = player.ID + " delivered ";
             }
         }
 
@@ -140,7 +157,7 @@ namespace MonoGameClient
 
         private void clientleft(string pData)
         {
-            PlayerData playerToRemove = totalPlayers.Find(l => l.playerID == pData);
+            PlayerData playerToRemove = totalPlayers.Find(l => l.ID == pData);
         }
 
         private void ServerConnection_StateChanged(StateChange State)
@@ -171,7 +188,7 @@ namespace MonoGameClient
             // Continue on and subscribe to the incoming messages joined, currentPlayers, otherMove messages
 
             // Immediate Pattern
-            proxy.Invoke<PlayerData>("Join")
+            proxy.Invoke<PlayerData>("Join" , new object[] { name })
                 .ContinueWith( // This is an inline delegate pattern that processes the message 
                                // returned from the async Invoke Call
                         (p) => { // Wtih p do 
@@ -263,7 +280,7 @@ namespace MonoGameClient
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                proxy.Invoke<string>("RemovePlayer", new object[] { Player.playerID }).ContinueWith(
+                proxy.Invoke<string>("RemovePlayer", new object[] { Player.ID }).ContinueWith(
                     (s) =>
                     {
                         if (s.Result == null)

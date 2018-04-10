@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,17 +14,24 @@ namespace CommonDataItems
         public int Y;
     }
 
+    [Table("PlayerDetails")]
     public class PlayerData
     {
-        public string playerID;
+        
+        [Key]
+        public string ID { get; set; }
+        [Display(Name = "Image Name")]
         public string imageName = string.Empty;
-       
+        [Display(Name = "Gamertag")]
         public string GamerTag = string.Empty;
-        public string PlayerName = string.Empty;
-        public int XP;
+        [Display(Name = "player Name")]
+        public string PlayerName { get; set; }
+        [Display(Name = "XP")]
+        public int XP { get; set; }
         public int GXp;
         public Position playerPosition;
-        public string Password;
+        [Display(Name = "Password")]
+        public string Password { get; set; }
     }
 
     public class Collectable

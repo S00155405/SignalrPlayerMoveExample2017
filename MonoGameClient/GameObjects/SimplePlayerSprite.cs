@@ -60,7 +60,7 @@ namespace Sprites
                 IHubProxy proxy = Game.Services.GetService<IHubProxy>();
                 proxy.Invoke("Moved", new Object[] 
                 {
-                    pData.playerID,
+                    pData.ID,
                     pData.playerPosition,
                     pData.GXp});
             }
