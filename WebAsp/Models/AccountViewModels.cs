@@ -1,11 +1,13 @@
-﻿using System;
+﻿using CommonDataItems;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAsp.Models
 {
-    // Models returned by AccountController actions.
+    //Models returned by AccountController actions.
 
-    public class ExternalLoginViewModel
+        public class ExternalLoginViewModel
     {
         public string Name { get; set; }
 
@@ -40,4 +42,5 @@ namespace WebAsp.Models
 
         public string ProviderKey { get; set; }
     }
+
 }
