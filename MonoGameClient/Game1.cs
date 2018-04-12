@@ -48,7 +48,7 @@ namespace MonoGameClient
         {
             using (WebClient client = new WebClient())
             {
-                string jsonData = client.DownloadString("http://localhost:63207/api/PlayerDatas/(ngannon)");
+                string jsonData = client.DownloadString("http://localhost:63207/api/PlayerDatas");
                 users = JsonConvert.DeserializeObject<List<PlayerData>>(jsonData);
             }
         }

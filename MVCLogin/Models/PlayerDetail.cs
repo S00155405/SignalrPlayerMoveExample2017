@@ -14,6 +14,7 @@ namespace MVCLogin.Models
     
     public partial class PlayerDetail
     {
+        
         public string ID { get; set; }
         public string PlayerName { get; set; }
         public int XP { get; set; }

@@ -24,26 +24,27 @@ namespace WebAsp.Controllers
             return db.PlayerDatas;
         }
 
+
         // GET: api/PlayerDatas/5
         [ResponseType(typeof(PlayerData))]
         public IHttpActionResult GetPlayerData(string name)
         {
-            return Ok( db.PlayerDatas.First());
-            //if (db.PlayerDatas.Any(pd => pd.PlayerName == name))
-            //{
-            //    PlayerData playerData = db.PlayerDatas.Where(pd => pd.PlayerName == name).First();
-               
-            //    if (playerData == null)
-            //    {
-            //        return NotFound();
-            //    }
 
-            //    return Ok(playerData);
-            //}
-            //else
-            //{
-            //    return NotFound();
-            //}
+            if (db.PlayerDatas.Any(pd => pd.PlayerName == name))
+            {
+                PlayerData playerData = db.PlayerDatas.Where(pd => pd.PlayerName == name).First();
+
+                if (playerData == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(playerData);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // PUT: api/PlayerDatas/5

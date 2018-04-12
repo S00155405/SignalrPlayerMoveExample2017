@@ -24,14 +24,14 @@ namespace SignalrGameServer
         public static Queue<PlayerData> RegisteredPlayers = new Queue<PlayerData>(new PlayerData[]
         {
 
-            new PlayerData { GamerTag = "Dark Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200 ,GXp = 0 },
-            new PlayerData { GamerTag = "Mistic Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
-            new PlayerData { GamerTag = "Jinxy", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200 ,GXp = 0 },
-            new PlayerData { GamerTag = "Jabber Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
-            new PlayerData { GamerTag = "Darks Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200,GXp = 0  },
-            new PlayerData { GamerTag = "Mistics Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
-            new PlayerData { GamerTag = "Jinxys", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200,GXp = 0  },
-            new PlayerData { GamerTag = "Jabbers Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
+            //new PlayerData { GamerTag = "Dark Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200 ,GXp = 0 },
+            //new PlayerData { GamerTag = "Mistic Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
+            //new PlayerData { GamerTag = "Jinxy", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200 ,GXp = 0 },
+            //new PlayerData { GamerTag = "Jabber Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
+            //new PlayerData { GamerTag = "Darks Terror", imageName = "", ID = Guid.NewGuid().ToString(), XP = 200,GXp = 0  },
+            //new PlayerData { GamerTag = "Mistics Meg", imageName = "", ID = Guid.NewGuid().ToString(), XP = 2000,GXp = 0  },
+            //new PlayerData { GamerTag = "Jinxys", imageName = "", ID = Guid.NewGuid().ToString(), XP = 1200,GXp = 0  },
+            //new PlayerData { GamerTag = "Jabbers Jaws", imageName = "", ID = Guid.NewGuid().ToString(), XP = 3200,GXp = 0  },
         });
        
         public static List<PlayerData> Players = new List<PlayerData>();

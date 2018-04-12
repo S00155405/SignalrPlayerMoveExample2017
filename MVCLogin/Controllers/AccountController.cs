@@ -164,7 +164,7 @@ namespace MVCLogin.Controllers
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                    playerDB.PlayerDetails.Add(new PlayerDetail() { PlayerName = user.UserName, XP = 0, Password = "", ID = "abc" });
+                    playerDB.PlayerDetails.Add(new PlayerDetail() { PlayerName = user.UserName, XP = 0, Password = user.PasswordHash,ID = user.Id });
                     playerDB.SaveChanges();
 
                     return RedirectToAction("Index", "Home");

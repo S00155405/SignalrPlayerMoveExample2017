@@ -13,7 +13,7 @@ namespace MVCLogin.Data
         protected override void Seed(CoreContext context)
         {
             var users = new List<PlayerData>
-            { new PlayerData() {PlayerName="Joe",XP=0,Password="fffyiuyuyi",ID="5678"} };
+            { new PlayerData() {PlayerName="Joe",XP=0,Password="fffyiuyuyi"} };
             users.ForEach(u => context.Users.Add(u));
             base.Seed(context);
         }
