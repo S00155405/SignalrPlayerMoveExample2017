@@ -18,22 +18,22 @@ namespace WebAsp.Migrations
 
         protected override void Seed(WebAsp.Models.WebAspContext context)
         {
-            //var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
-            //context.PlayerDatas.AddOrUpdate(new CommonDataItems.PlayerData
-            //{
-            //    ID = "1234",
-            //    PlayerName = "heck",
-            //    XP = 12,
-            //    //GamerTag = "something",
-            //    //GXp = 10,
-            //    //imageName = "picture",
-            //    Password = "secret",
-            //    //playerPosition = new Position()
+            context.PlayerDatas.AddOrUpdate(new CommonDataItems.PlayerData
+            {
+                //ID = "1234",
+                PlayerName = "heck",
+                XP = 12,
+                //GamerTag = "something",
+                //GXp = 10,
+                //imageName = "picture",
+                Password = "secret",
+                //playerPosition = new Position()
 
-            //});
+            });
 
-            
+
 
             context.SaveChanges();
         }

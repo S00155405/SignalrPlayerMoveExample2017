@@ -161,7 +161,7 @@ namespace SignalrGameServer
                 item.XP += item.GXp;
                 using (WebClient client = new WebClient())
                 {
-                    string jsonData = client.UploadString("http://localhost:63207/api/PlayerDatas/5", item.ToString());
+                    //string jsonData = client.UploadString("http://localhost:63207/api/PlayerDatas", item.ToString());
                     
                 }
             }
