@@ -20,20 +20,29 @@ namespace WebAsp.Controllers
         // GET: api/PlayerDatas
         public IQueryable<PlayerData> GetPlayerDatas()
         {
+
             return db.PlayerDatas;
         }
 
         // GET: api/PlayerDatas/5
         [ResponseType(typeof(PlayerData))]
-        public IHttpActionResult GetPlayerData(string id)
+        public IHttpActionResult GetPlayerData(string name)
         {
-            PlayerData playerData = db.PlayerDatas.Find(id);
-            if (playerData == null)
+            if (db.PlayerDatas.Any(pd => pd.PlayerName == name))
+            {
+                PlayerData playerData = db.PlayerDatas.Where(pd => pd.PlayerName == name).First();
+               
+                if (playerData == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(playerData);
+            }
+            else
             {
                 return NotFound();
             }
-
-            return Ok(playerData);
         }
 
         // PUT: api/PlayerDatas/5

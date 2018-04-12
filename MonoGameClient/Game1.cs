@@ -48,7 +48,7 @@ namespace MonoGameClient
         {
             using (WebClient client = new WebClient())
             {
-                string jsonData = client.DownloadString("http://localhost:63207/api/PlayerDatas");
+                string jsonData = client.DownloadString("http://localhost:63207/api/PlayerDatas/5");
                 users = JsonConvert.DeserializeObject<List<PlayerData>>(jsonData);
             }
         }
@@ -72,7 +72,7 @@ namespace MonoGameClient
             new FadeTextManager(this);
             new Leaderboard(this);
             GetAllUsers();
-            name = users[0];
+            name = users[users.Count - 1];
             // TODO: Add your initialization logic here change local host to newly created local host
             // http://signalrgameserver20171123102038.azurewebsites.net/
             // Second server http://ppowellgameserver.azurewebsites.net
