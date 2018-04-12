@@ -28,21 +28,22 @@ namespace WebAsp.Controllers
         [ResponseType(typeof(PlayerData))]
         public IHttpActionResult GetPlayerData(string name)
         {
-            if (db.PlayerDatas.Any(pd => pd.PlayerName == name))
-            {
-                PlayerData playerData = db.PlayerDatas.Where(pd => pd.PlayerName == name).First();
+            return Ok( db.PlayerDatas.First());
+            //if (db.PlayerDatas.Any(pd => pd.PlayerName == name))
+            //{
+            //    PlayerData playerData = db.PlayerDatas.Where(pd => pd.PlayerName == name).First();
                
-                if (playerData == null)
-                {
-                    return NotFound();
-                }
+            //    if (playerData == null)
+            //    {
+            //        return NotFound();
+            //    }
 
-                return Ok(playerData);
-            }
-            else
-            {
-                return NotFound();
-            }
+            //    return Ok(playerData);
+            //}
+            //else
+            //{
+            //    return NotFound();
+            //}
         }
 
         // PUT: api/PlayerDatas/5
